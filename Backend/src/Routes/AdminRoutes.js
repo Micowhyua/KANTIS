@@ -1,5 +1,4 @@
 const express = require("express");
-
 const router = express.Router();
 
 const {
@@ -7,36 +6,32 @@ const {
   createAdminFakultas,
   createAdminKantin,
   updateAdminStatus,
+  updateAdmin,
+  deleteAdmin,
 } = require("../Controllers/AdminController");
 
 const authMiddleware = require("../Middlewares/AuthMiddleware");
 const roleMiddleware = require("../Middlewares/RoleMiddleware");
 
-// Semua endpoint admin hanya untuk Super Admin
-router.use(
-  authMiddleware,
-  roleMiddleware("super_admin")
-);
+// Semua endpoint admin di bawah ini hanya bisa diakses oleh Super Admin
+router.use(authMiddleware, roleMiddleware("super_admin"));
 
-// Semua admin
+// [GET] Ambil semua data admin (Fakultas & Kantin)
 router.get("/", getAllAdmin);
 
-// Buat Admin Fakultas
-router.post(
-  "/fakultas",
-  createAdminFakultas
-);
+// [POST] Buat Admin Fakultas baru
+router.post("/fakultas", createAdminFakultas);
 
-// Buat Admin Kantin
-router.post(
-  "/kantin",
-  createAdminKantin
-);
+// [POST] Buat Admin Kantin baru
+router.post("/kantin", createAdminKantin);
 
-// Aktif/nonaktif admin
-router.patch(
-  "/:id/status",
-  updateAdminStatus
-);
+// [PUT] Update data profil Admin (Nama, Email, Password) -> BARU
+router.put("/:id", updateAdmin);
+
+// [PATCH] Ubah status Aktif/Nonaktif Admin
+router.patch("/:id/status", updateAdminStatus);
+
+// [DELETE] Hapus Admin -> BARU
+router.delete("/:id", deleteAdmin);
 
 module.exports = router;

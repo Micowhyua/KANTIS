@@ -314,10 +314,96 @@ const updateAdminStatus = async (req, res) => {
   }
 };
 
+const updateAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nama, email, password } = req.body;
+
+    if (!nama || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Nama dan email wajib diisi",
+      });
+    }
+
+    // Cek apakah email sudah digunakan oleh user lain
+    const [existingUser] = await db.query(
+      "SELECT id FROM users WHERE email = ? AND id != ?",
+      [email, id]
+    );
+
+    if (existingUser.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "Email sudah digunakan oleh user lain",
+      });
+    }
+
+    // Jika password diisi, update password baru (hashed). Jika tidak, pakai password lama.
+    if (password && password.trim() !== "") {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await db.query(
+        "UPDATE users SET nama = ?, email = ?, password = ? WHERE id = ? AND role IN ('admin_fakultas', 'admin_kantin')",
+        [nama, email, hashedPassword, id]
+      );
+    } else {
+      await db.query(
+        "UPDATE users SET nama = ?, email = ? WHERE id = ? AND role IN ('admin_fakultas', 'admin_kantin')",
+        [nama, email, id]
+      );
+    }
+
+    res.json({
+      success: true,
+      message: "Data admin berhasil diperbarui",
+    });
+  } catch (error) {
+    console.error("Update Admin Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Gagal memperbarui data admin",
+    });
+  }
+};
+
+const deleteAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await db.query(
+      `
+      DELETE FROM users 
+      WHERE id = ? 
+      AND role IN ('admin_fakultas', 'admin_kantin')
+      `,
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin tidak ditemukan",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Admin berhasil dihapus",
+    });
+  } catch (error) {
+    console.error("Delete Admin Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Gagal menghapus admin (mungkin terikat data lain)",
+    });
+  }
+};
 
 module.exports = {
   getAllAdmin,
   createAdminFakultas,
   createAdminKantin,
   updateAdminStatus,
+  updateAdmin,
+  deleteAdmin,
 };
