@@ -29,6 +29,10 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
+<<<<<<< HEAD:frontend/jsconfig.json
 , "src/app/page.js", "src/app/layout.js"  ],
+=======
+, "src/app/login/page.js"  ],
+>>>>>>> 158d09b46bf156f6b07c246e2b288954a95795ea:frontend/tsconfig.json
   "exclude": ["node_modules"]
 }
