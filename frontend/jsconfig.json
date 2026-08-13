@@ -23,7 +23,7 @@
     }
   },
   "include": [
-    "next-env.d.ts",
+    "next-env.d.js",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
@@ -32,6 +32,6 @@
     "src/app/page.js",
     "src/app/layout.js",
     "src/app/login/page.js"
-  ],
+, "src/app/(user)/canteens/[canteenId]/page.js", "src/app/(user)/canteens/[canteenId]/vendors/[vendorId]/page.js", "src/app/(user)/checkout/page.js", "src/app/(user)/orders/[orderId]/page.js", "src/app/(user)/orders/page.js", "src/app/(user)/page.js", "src/app/adminkantin/page.js"  ],
   "exclude": ["node_modules"]
 }
